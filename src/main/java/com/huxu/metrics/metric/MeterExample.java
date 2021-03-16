@@ -10,7 +10,8 @@ import java.util.concurrent.TimeUnit;
 public class MeterExample {
 
     private static final MetricRegistry metrics = new MetricRegistry();
-    private static final Meter requests = metrics.meter("tqs");
+    private static final Meter requestsMeter = metrics.meter("tqs");
+    private static final Meter sizeMeter = metrics.meter("volum");
 
 
     public static void main(String[] args) {
@@ -19,17 +20,18 @@ public class MeterExample {
                 .convertRatesTo(TimeUnit.MINUTES)
                 .convertDurationsTo(TimeUnit.MINUTES)
                 .build();
-        reporter.start(5, TimeUnit.SECONDS);
+        reporter.start(10, TimeUnit.SECONDS);
 
         for ( ; ; ){
-            handle(null);
+            handle(new byte[ThreadLocalRandom.current().nextInt(1)]);
             randomSleep();
         }
     }
 
 
     public static void handle(byte[] request){
-        requests.mark();
+        requestsMeter.mark();
+        sizeMeter.mark(request.length);
         randomSleep();
     }
 
