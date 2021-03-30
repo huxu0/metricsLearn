@@ -11,8 +11,6 @@ public class MeterExample {
 
     private static final MetricRegistry metrics = new MetricRegistry();
     private static final Meter requestsMeter = metrics.meter("tqs");
-    private static final Meter sizeMeter = metrics.meter("volum");
-
 
     public static void main(String[] args) {
 
@@ -23,21 +21,18 @@ public class MeterExample {
         reporter.start(10, TimeUnit.SECONDS);
 
         for ( ; ; ){
-            handle(new byte[ThreadLocalRandom.current().nextInt(1)]);
+            handle();
             randomSleep();
         }
     }
 
-
-    public static void handle(byte[] request){
+    public static void handle(){
         requestsMeter.mark();
-        sizeMeter.mark(request.length);
-        randomSleep();
     }
 
     public static void randomSleep(){
         try {
-            TimeUnit.SECONDS.sleep(ThreadLocalRandom.current().nextInt(1));
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
